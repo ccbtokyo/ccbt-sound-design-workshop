@@ -33,6 +33,8 @@ class AudioBank {
   load(file: p5.File) {
     if (file.type === "audio") {
       this.player.load(file.data);
+    } else {
+      alert("音のファイルをえらんでください");
     }
   }
 
@@ -72,11 +74,16 @@ class AudioBank {
       y > this.y + 180 &&
       y < this.y + 230
     ) {
+      let prevPlayerState = this.player.state;
       this.player.loop = !this.player.loop;
+      if(prevPlayerState === "stopped") {
+        this.player.stop();
+      }
     }
   }
 
   display() {
+    // Record Button
     this.p.fill(255);
     if (this.recording) {
       this.p.fill(255, 0, 0);
@@ -84,6 +91,7 @@ class AudioBank {
       this.p.fill(255);
     }
     this.p.ellipse(this.x + 25, this.y + 25 + 60, 50, 50);
+
     this.p.fill(0);
     if (this.recording) {
       this.p.text("Stop", this.x + 10, this.y + 80);
@@ -91,8 +99,15 @@ class AudioBank {
       this.p.text("Rec", this.x + 10, this.y + 80);
     }
 
+    // Play Button
     if (this.player.loaded) {
       this.p.fill(255);
+
+      if (this.player.state === "started") {
+        this.p.fill(0, 255, 0);
+      } else {
+        this.p.fill(255);
+      }
     } else {
       this.p.fill(200);
     }
@@ -105,18 +120,22 @@ class AudioBank {
       this.x,
       this.y + 120 + 50
     );
+
     if (this.player.loaded) {
       this.p.fill(0);
     } else {
       this.p.fill(0, 100);
     }
+
     this.p.text("Play", this.x + 10, this.y + 140);
 
+    // Loop Button
     if (this.player.loop) {
       this.p.fill(255, 255, 0);
     } else {
       this.p.fill(255);
     }
+
     this.p.rect(this.x, this.y + 180, 50, 50);
     this.p.fill(0);
     this.p.text("Loop", this.x + 10, this.y + 200);
