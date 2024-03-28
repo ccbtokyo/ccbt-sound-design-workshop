@@ -9,14 +9,22 @@ class AudioBank {
   fileInput: p5.Element;
   loop: boolean;
   recording: boolean;
+  recordedURL: string;
   player: Tone.Player;
   id: number;
+  recIcon: p5.Image;
+  playIcon: p5.Image;
+  downloadIcon: p5.Image;
+  loopIcon: p5.Image;
+  buttonSize: number = 50;
+  buttonMargin: number = 10;
+  buttonOffsetY: number = 60;
 
   constructor(p: p5, x: number, y: number, id: number) {
     this.p = p;
     this.x = x;
     this.y = y;
-    this.fileLabel = p.createElement("label", "File");
+    this.fileLabel = p.createElement("label", "");
     this.fileLabel.position(this.x, this.y);
     this.fileLabel.class("label");
     this.fileLabel.attribute("for", `file-${id}`);
@@ -26,8 +34,14 @@ class AudioBank {
     this.fileInput?.class("file");
     this.loop = false;
     this.recording = false;
+    this.recordedURL = "";
     this.player = new Tone.Player().toDestination();
     this.id = id;
+    this.recIcon = p.loadImage("/tmp/sdw/rec.svg");
+    this.playIcon = p.loadImage("/tmp/sdw/play.svg");
+    this.downloadIcon = p.loadImage("/tmp/sdw/download.svg");
+    this.loopIcon = p.loadImage("/tmp/sdw/loop.svg");
+    this.downloadIcon = p.loadImage("/tmp/sdw/download.svg");
   }
 
   load(file: p5.File) {
@@ -49,6 +63,7 @@ class AudioBank {
       this.recording = false;
       const recorded = await recorder.stop();
       const url = URL.createObjectURL(recorded);
+      this.recordedURL = url;
       this.player.load(url);
     } else {
       this.recording = true;
@@ -56,89 +71,129 @@ class AudioBank {
     }
   }
 
-  stop() {}
+  download() {
+    if (this.recordedURL === "") return;
+    const anchor = document.createElement("a");
+    anchor.download = `record-${this.id}-${new Date().toISOString()}.wav`;
+    anchor.href = this.recordedURL;
+    anchor.click();
+  }
 
   async contains(x: number, y: number, recorder: Tone.Recorder) {
-    if (x > this.x && x < this.x + 50 && y > this.y + 60 && y < this.y + 110) {
+    if (
+      x > this.x &&
+      x < this.x + this.buttonSize &&
+      y > this.y + this.buttonOffsetY &&
+      y < this.y + this.buttonOffsetY + this.buttonSize
+    ) {
       this.record(recorder);
     } else if (
       x > this.x &&
-      x < this.x + 50 &&
-      y > this.y + 120 &&
-      y < this.y + 170
+      x < this.x + this.buttonSize &&
+      y > this.y + this.buttonOffsetY + this.buttonSize + this.buttonMargin &&
+      y < this.y + this.buttonOffsetY + this.buttonSize * 2 + this.buttonMargin
     ) {
       this.play();
     } else if (
       x > this.x &&
-      x < this.x + 50 &&
-      y > this.y + 180 &&
-      y < this.y + 230
+      x < this.x + this.buttonSize &&
+      y >
+        this.y +
+          this.buttonOffsetY +
+          this.buttonSize * 2 +
+          this.buttonMargin * 2 &&
+      y <
+        this.y +
+          this.buttonOffsetY +
+          this.buttonSize * 3 +
+          this.buttonMargin * 2
     ) {
       let prevPlayerState = this.player.state;
       this.player.loop = !this.player.loop;
-      if(prevPlayerState === "stopped") {
+      if (prevPlayerState === "stopped") {
         this.player.stop();
       }
+    } else if (
+      x > this.x &&
+      x < this.x + this.buttonSize &&
+      y >
+        this.y +
+          this.buttonOffsetY +
+          this.buttonSize * 3 +
+          this.buttonMargin * 3 &&
+      y <
+        this.y +
+          this.buttonOffsetY +
+          this.buttonSize * 4 +
+          this.buttonMargin * 3
+    ) {
+      this.download();
     }
   }
 
   display() {
+    this.p.noStroke();
     // Record Button
     this.p.fill(255);
     if (this.recording) {
-      this.p.fill(255, 0, 0);
+      this.p.fill(255, 72, 176);
     } else {
       this.p.fill(255);
     }
-    this.p.ellipse(this.x + 25, this.y + 25 + 60, 50, 50);
+    this.p.ellipse(
+      this.x + 25,
+      this.y + 25 + 60,
+      this.buttonSize,
+      this.buttonSize
+    );
+    this.p.image(this.recIcon, this.x + 5, this.y + 5 + 60, 40, 40);
 
     this.p.fill(0);
-    if (this.recording) {
-      this.p.text("Stop", this.x + 10, this.y + 80);
-    } else {
-      this.p.text("Rec", this.x + 10, this.y + 80);
-    }
 
     // Play Button
     if (this.player.loaded) {
       this.p.fill(255);
 
       if (this.player.state === "started") {
-        this.p.fill(0, 255, 0);
+        this.p.fill(94, 200, 229);
       } else {
         this.p.fill(255);
       }
     } else {
-      this.p.fill(200);
+      this.p.fill(112, 116, 124);
     }
 
-    this.p.triangle(
-      this.x,
-      this.y + 120,
-      this.x + 50,
-      this.y + 120 + 25,
-      this.x,
-      this.y + 120 + 50
+    this.p.ellipse(
+      this.x + 25,
+      this.y + 25 + 120,
+      this.buttonSize,
+      this.buttonSize
     );
-
-    if (this.player.loaded) {
-      this.p.fill(0);
-    } else {
-      this.p.fill(0, 100);
-    }
-
-    this.p.text("Play", this.x + 10, this.y + 140);
+    this.p.image(this.playIcon, this.x + 5, this.y + 5 + 120, 40, 40);
 
     // Loop Button
     if (this.player.loop) {
-      this.p.fill(255, 255, 0);
+      this.p.fill(255, 232, 0);
     } else {
       this.p.fill(255);
     }
 
-    this.p.rect(this.x, this.y + 180, 50, 50);
-    this.p.fill(0);
-    this.p.text("Loop", this.x + 10, this.y + 200);
+    this.p.ellipse(
+      this.x + 25,
+      this.y + 25 + 180,
+      this.buttonSize,
+      this.buttonSize
+    );
+    this.p.image(this.loopIcon, this.x + 5, this.y + 5 + 180, 40, 40);
+
+    // Download Button
+    if (this.recordedURL === "") {
+      this.p.fill(112, 116, 124);
+    } else {
+      this.p.fill(255);
+    }
+    this.p.rect(this.x, this.y + 240, 50, 50, 8, 8, 8, 8);
+    this.p.image(this.downloadIcon, this.x + 5, this.y + 5 + 240, 40, 40);
   }
 }
 
