@@ -45,7 +45,7 @@ startButton?.addEventListener("click", async () => {
       p.background(165, 170, 168);
 
       p.stroke(230);
-      for(let i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i++) {
         p.line(100 + i * 100, 25, 100 + i * 100, 315);
       }
 

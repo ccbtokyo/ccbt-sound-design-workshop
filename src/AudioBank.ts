@@ -37,19 +37,15 @@ class AudioBank {
     this.recordedURL = "";
     this.player = new Tone.Player().toDestination();
     this.id = id;
-    this.recIcon = p.loadImage("/tmp/sdw/rec.svg");
-    this.playIcon = p.loadImage("/tmp/sdw/play.svg");
-    this.downloadIcon = p.loadImage("/tmp/sdw/download.svg");
-    this.loopIcon = p.loadImage("/tmp/sdw/loop.svg");
-    this.downloadIcon = p.loadImage("/tmp/sdw/download.svg");
+    this.recIcon = p.loadImage("/app/sdw/rec.svg");
+    this.playIcon = p.loadImage("/app/sdw/play.svg");
+    this.downloadIcon = p.loadImage("/app/sdw/download.svg");
+    this.loopIcon = p.loadImage("/app/sdw/loop.svg");
+    this.downloadIcon = p.loadImage("/app/sdw/download.svg");
   }
 
   load(file: p5.File) {
-    if (file.type === "audio") {
-      this.player.load(file.data);
-    } else {
-      alert("音のファイルをえらんでください");
-    }
+    this.player.load(file.data);
   }
 
   play() {
@@ -74,7 +70,7 @@ class AudioBank {
   download() {
     if (this.recordedURL === "") return;
     const anchor = document.createElement("a");
-    anchor.download = `record-${this.id}-${new Date().toISOString()}.wav`;
+    anchor.download = `record-${this.id}-${new Date().toISOString()}`;
     anchor.href = this.recordedURL;
     anchor.click();
   }
