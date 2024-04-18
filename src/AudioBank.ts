@@ -37,11 +37,11 @@ class AudioBank {
     this.recordedURL = "";
     this.player = new Tone.Player().toDestination();
     this.id = id;
-    this.recIcon = p.loadImage("/apps/hirameki-sampler/rec.svg");
-    this.playIcon = p.loadImage("/apps/hirameki-sampler/play.svg");
-    this.downloadIcon = p.loadImage("/apps/hirameki-sampler/download.svg");
-    this.loopIcon = p.loadImage("/apps/hirameki-sampler/loop.svg");
-    this.downloadIcon = p.loadImage("/apps/hirameki-sampler/download.svg");
+    this.recIcon = p.loadImage("/apps/hirameku-sampler/rec.svg");
+    this.playIcon = p.loadImage("/apps/hirameku-sampler/play.svg");
+    this.downloadIcon = p.loadImage("/apps/hirameku-sampler/download.svg");
+    this.loopIcon = p.loadImage("/apps/hirameku-sampler/loop.svg");
+    this.downloadIcon = p.loadImage("/apps/hirameku-sampler/download.svg");
   }
 
   load(file: p5.File) {
