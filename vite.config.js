@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  base: "/app/sdw",
+  base: "/apps/hirameki-sampler/",
 });
