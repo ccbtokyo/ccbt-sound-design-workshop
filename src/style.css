@@ -54,7 +54,7 @@ canvas {
   border: none;
   border-radius: 8px;
   background-color: #fff;
-  background-image: url('/apps/hirameku-sampler/file.svg');
+  background-image: url('/file.svg');
   background-size: 40px 40px;
   background-repeat: no-repeat;
   background-position: 5px 5px;
