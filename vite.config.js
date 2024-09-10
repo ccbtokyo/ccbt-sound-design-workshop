@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: "/apps/hirameku-sampler/",
+  base: '/ccbt-sound-design-workshop/',
 });
