@@ -12,15 +12,28 @@ class AudioBank {
   recordedURL: string;
   player: Tone.Player;
   id: number;
-  recIcon: p5.Image;
-  playIcon: p5.Image;
-  downloadIcon: p5.Image;
-  loopIcon: p5.Image;
+  recIcon: p5.Element;
+  playIcon: p5.Element;
+  downloadIcon: p5.Element;
+  loopIcon: p5.Element;
   buttonSize: number = 50;
   buttonMargin: number = 10;
   buttonOffsetY: number = 60;
+  mic: Tone.UserMedia;
+  analyser: Tone.Analyser;
 
-  constructor(p: p5, x: number, y: number, id: number) {
+  constructor(
+    p: p5,
+    x: number,
+    y: number,
+    id: number,
+    recIcon: p5.Element,
+    playIcon: p5.Element,
+    downloadIcon: p5.Element,
+    loopIcon: p5.Element,
+    mic: Tone.UserMedia,
+    analyser: Tone.Analyser
+  ) {
     this.p = p;
     this.x = x;
     this.y = y;
@@ -37,11 +50,13 @@ class AudioBank {
     this.recordedURL = "";
     this.player = new Tone.Player().toDestination();
     this.id = id;
-    this.recIcon = p.loadImage("/apps/hirameku-sampler/rec.svg");
-    this.playIcon = p.loadImage("/apps/hirameku-sampler/play.svg");
-    this.downloadIcon = p.loadImage("/apps/hirameku-sampler/download.svg");
-    this.loopIcon = p.loadImage("/apps/hirameku-sampler/loop.svg");
-    this.downloadIcon = p.loadImage("/apps/hirameku-sampler/download.svg");
+    this.recIcon = recIcon;
+    this.playIcon = playIcon;
+    this.downloadIcon = downloadIcon;
+    this.loopIcon = loopIcon;
+    this.mic = mic;
+    this.analyser = analyser;
+
   }
 
   load(file: p5.File) {
@@ -50,6 +65,9 @@ class AudioBank {
 
   play() {
     if (this.player.loaded) {
+      if (this.player.state === "started") {
+        this.player.stop();
+      }
       this.player.start();
     }
   }
@@ -57,12 +75,14 @@ class AudioBank {
   async record(recorder: Tone.Recorder) {
     if (this.recording) {
       this.recording = false;
+      this.mic.disconnect(this.analyser);
       const recorded = await recorder.stop();
       const url = URL.createObjectURL(recorded);
       this.recordedURL = url;
-      this.player.load(url);
+      await this.player.load(url);
     } else {
       this.recording = true;
+      this.mic.connect(this.analyser);
       recorder.start();
     }
   }
@@ -70,7 +90,7 @@ class AudioBank {
   download() {
     if (this.recordedURL === "") return;
     const anchor = document.createElement("a");
-    anchor.download = `record-${this.id}-${new Date().toISOString()}.webm`;
+    anchor.download = `record-${this.id}-${new Date().toISOString()}`;
     anchor.href = this.recordedURL;
     anchor.click();
   }
